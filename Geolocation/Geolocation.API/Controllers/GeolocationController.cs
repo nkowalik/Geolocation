@@ -1,5 +1,6 @@
 ﻿using Geolocation.Api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Geolocation.Api.Controllers
 {
@@ -7,13 +8,20 @@ namespace Geolocation.Api.Controllers
     [Route("api/geolocation")]
     public class GeolocationController : ControllerBase
     {
+        private readonly IConfiguration _config;
+
+        public GeolocationController(IConfiguration config)
+        {
+            _config = config;
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<GeolocationDto>> GetAllGeolocationInformation()
         {
             return Ok(GeolocationDataStore.Current.Geolocation);
         }
 
-        [HttpGet("{id}", Name = "GetGeolocation")]
+        [HttpGet("{id}", Name = "GetGeolocationInformationById")]
         public ActionResult<GeolocationDto> GetGeolocationInformationById(int id)
         {
             var geolocation = GeolocationDataStore.Current.Geolocation
@@ -27,38 +35,41 @@ namespace Geolocation.Api.Controllers
             return Ok(geolocation);
         }
 
-        [HttpPost]
-        public ActionResult<GeolocationDto> CreateGeolocation(InputDataDto inputData)
+        [HttpPost("{address}")]
+        public async Task<ActionResult<GeolocationDto>> CreateGeolocationAsync(string address)
         {
-            // try to get details from https://ipstack.com/
-            // validate input data: ModelState.IsValid -> bad request
-            // if failed - return NotFound()
-            // if ok - add it to the dto
+            GeolocationDetailsDto? geoDetails;
+            var accessKey = _config.GetValue<string>("Geolocation:AccessKey");
+            using (var httpClient = new HttpClient())
+            {
+                using var response = await httpClient.GetAsync($"https://api.ipstack.com/{address}?access_key={accessKey}");
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                geoDetails = JsonConvert.DeserializeObject<GeolocationDetailsDto>(apiResponse);
+            }
+
+            if (geoDetails == null)
+            {
+                return NotFound();
+            }
+
+            if (!IsValidateInput(geoDetails))
+            {
+                return BadRequest(address);
+            }
 
             var geolocation = new GeolocationDto
             {
-                Id = GeolocationDataStore.Current.Geolocation.Max(g => g.Id)+1,
-                Address = inputData.Address,
-                GeoDetails = new GeolocationDetailsDto()
+                Id = GeolocationDataStore.Current.Geolocation.Max(g => g.Id) + 1,
+                Address = address,
+                GeoDetails = geoDetails
             };
 
             return CreatedAtRoute("GetGeolocation", geolocation);
         }
 
-        [HttpDelete]
-        public ActionResult DeleteGeolocation(InputDataDto inputData)
+        private bool IsValidateInput(GeolocationDetailsDto geoDetails)
         {
-            bool isGeolocationPresent = GeolocationDataStore.Current.Geolocation
-                .Any(g => g.Address == inputData.Address);
-            if (!isGeolocationPresent)
-            {
-                return NotFound();
-            }
-
-            GeolocationDataStore.Current.Geolocation
-                .RemoveAll(g => g.Address == inputData.Address);
-
-            return NoContent();
+            return true;
         }
 
         [HttpDelete]
