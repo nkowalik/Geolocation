@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Geolocation/Geolocation.Api.Tests/appsettings.Development.json
+/Geolocation/Geolocation.API/appsettings.Development.json

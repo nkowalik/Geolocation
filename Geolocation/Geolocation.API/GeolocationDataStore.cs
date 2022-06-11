@@ -9,12 +9,7 @@ namespace Geolocation.Api
 
         public GeolocationDataStore()
         {
-            Geolocation = new List<GeolocationDto>()
-            {
-                new GeolocationDto() { Id = 1, Address = "url", GeoDetails = new GeolocationDetailsDto{Id = 5} },
-                new GeolocationDto() { Id = 2, Address = "ip", GeoDetails = new GeolocationDetailsDto{Id = 6}},
-                new GeolocationDto() { Id = 3, Address = "url2", GeoDetails = new GeolocationDetailsDto{Id = 7}}
-            };
+            Geolocation = new List<GeolocationDto>();
         }
     }
 }
