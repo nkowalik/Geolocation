@@ -1,4 +1,6 @@
-﻿using Geolocation.Api.Models;
+﻿using AutoMapper;
+using Geolocation.Api.Models;
+using Geolocation.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Geolocation.Api.Controllers
@@ -8,23 +10,32 @@ namespace Geolocation.Api.Controllers
     public class GeolocationDetailsController : ControllerBase
     {
         private readonly ILogger<GeolocationDetailsController> _logger;
+        private readonly IMapper _mapper;
+        private readonly IGeolocationRepository _repository;
 
-        public GeolocationDetailsController(ILogger<GeolocationDetailsController> logger)
+        public GeolocationDetailsController(ILogger<GeolocationDetailsController> logger,
+            IMapper mapper, IGeolocationRepository repository)
         {
-            _logger = logger;
+            _logger = logger ??
+                throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
+            _repository = repository ??
+                throw new ArgumentNullException(nameof(repository));
         }
 
         [HttpGet]
-        public ActionResult<GeolocationDetailsDto> GetGeoData(int id)
+        public async Task<ActionResult<GeolocationDetailsDto>> GetGeolocationDetailsAsync(int id)
         {
-            var geolocation = GeolocationDataStore.Current.Geolocation.FirstOrDefault(g => g.Id == id);
-            if (geolocation == null || geolocation.GeoDetails == null)
+            if (!await _repository.GeolocationExistsAsync(id))
             {
                 _logger.LogInformation($"Geolocation details with id {id} were not found.");
                 return NotFound();
             }
 
-            return Ok(geolocation.GeoDetails.Ip);
+            var geolocationDetails = await _repository.GetGeolocationDetailsAsync(id);
+
+            return Ok(_mapper.Map<GeolocationDetailsDto>(geolocationDetails));
         }
     }
 }

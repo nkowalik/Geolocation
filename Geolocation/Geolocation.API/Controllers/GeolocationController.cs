@@ -1,4 +1,7 @@
-﻿using Geolocation.Api.Models;
+﻿using AutoMapper;
+using Geolocation.Api.Entities;
+using Geolocation.Api.Models;
+using Geolocation.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -9,40 +12,49 @@ namespace Geolocation.Api.Controllers
     public class GeolocationController : ControllerBase
     {
         private readonly IConfiguration _config;
+        private readonly IGeolocationRepository _geolocationRepository;
+        private readonly IMapper _mapper;
 
-        public GeolocationController(IConfiguration config)
+        public GeolocationController(IConfiguration config,
+            IGeolocationRepository geolocationRepository,
+            IMapper mapper)
         {
-            _config = config;
+            _config = config ?? 
+                throw new ArgumentNullException(nameof(config));
+            _geolocationRepository = geolocationRepository ??
+                throw new ArgumentNullException(nameof(geolocationRepository));
+            _mapper = mapper ?? 
+                throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<GeolocationDto>> GetAllGeolocationInformation()
+        public async Task<ActionResult<IEnumerable<GeolocationDetailsDto>>> GetGeolocations()
         {
-            return Ok(GeolocationDataStore.Current.Geolocation);
+            var geolocationEntities = await _geolocationRepository.GetGeolocationsAsync();
+            return Ok(_mapper.Map<IEnumerable<GeolocationDetailsDto>>(geolocationEntities));
         }
 
-        [HttpGet("{id}", Name = "GetGeolocationInformationById")]
-        public ActionResult<GeolocationDto> GetGeolocationInformationById(int id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetGeolocation(int id)
         {
-            var geolocation = GeolocationDataStore.Current.Geolocation
-                .FirstOrDefault(g => g.Id == id);
+            var geolocationEntity = await _geolocationRepository.GetGeolocationAsync(id);
             
-            if (geolocation == null)
+            if (geolocationEntity == null)
             {
                 return NotFound();
             }
 
-            return Ok(geolocation);
+            return Ok(_mapper.Map<GeolocationDetailsDto>(geolocationEntity));
         }
 
         [HttpPost("{address}")]
-        public async Task<ActionResult<GeolocationDto>> CreateGeolocationAsync(string address)
+        public async Task<ActionResult<GeolocationDto>> CreateGeolocation(string address)
         {
             GeolocationDetailsDto? geoDetails;
             var accessKey = _config.GetValue<string>("Geolocation:AccessKey");
             using (var httpClient = new HttpClient())
             {
-                using var response = await httpClient.GetAsync($"https://api.ipstack.com/{address}?access_key={accessKey}");
+                using var response = await httpClient.GetAsync($"http://api.ipstack.com/{address}?access_key={accessKey}");
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 geoDetails = JsonConvert.DeserializeObject<GeolocationDetailsDto>(apiResponse);
             }
@@ -57,32 +69,30 @@ namespace Geolocation.Api.Controllers
                 return BadRequest(address);
             }
 
-            var geolocation = new GeolocationDto
-            {
-                Id = GeolocationDataStore.Current.Geolocation.Max(g => g.Id) + 1,
-                Address = address,
-                GeoDetails = geoDetails
-            };
+            var finalGeoDetails = _mapper.Map<GeolocationDetails>(geoDetails);
 
-            return CreatedAtRoute("GetGeolocation", geolocation);
+            return CreatedAtRoute("GetGeolocation", new
+            {
+                Address = address,
+                GeoDetails = finalGeoDetails
+            }, finalGeoDetails);
         }
 
-        private bool IsValidateInput(GeolocationDetailsDto geoDetails)
+        private static bool IsValidateInput(GeolocationDetailsDto geoDetails)
         {
             return true;
         }
 
         [HttpDelete]
-        public ActionResult DeleteGeolocation(int id)
+        public async Task<ActionResult> DeleteGeolocation(int id)
         {
-            var geolocation = GeolocationDataStore.Current.Geolocation
-                .FirstOrDefault(g => g.Id == id);
-            if (geolocation == null)
+            if(!await _geolocationRepository.GeolocationExistsAsync(id))
             {
                 return NotFound();
             }
 
-            GeolocationDataStore.Current.Geolocation.Remove(geolocation);
+            var geolocationEntity = await _geolocationRepository.GetGeolocationAsync(id);
+            _geolocationRepository.DeleteGeolocation(geolocationEntity!);
 
             return NoContent();
         }
