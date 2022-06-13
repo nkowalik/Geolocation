@@ -25,6 +25,8 @@ namespace Geolocation.Api.Controllers
                 throw new ArgumentNullException(nameof(geolocationRepository));
             _mapper = mapper ?? 
                 throw new ArgumentNullException(nameof(mapper));
+
+            InitializeGeolocationData();
         }
 
         [HttpGet]
@@ -80,6 +82,11 @@ namespace Geolocation.Api.Controllers
 
         private static bool IsValidateInput(GeolocationDetailsDto geoDetails)
         {
+            if (geoDetails.Continent is null || geoDetails.Country is null)
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -95,6 +102,43 @@ namespace Geolocation.Api.Controllers
             _geolocationRepository.DeleteGeolocation(geolocationEntity!);
 
             return NoContent();
+        }
+
+        private void InitializeGeolocationData()
+        {
+            const string sampleIpAddress = "134.201.250.155";
+            var geoDetails = _mapper.Map<GeolocationDetails>(new GeolocationDetailsDto
+            {
+                Ip = sampleIpAddress,
+                Continent = "North America",
+                ContinentCode = "NA",
+                Country = "United States",
+                CountryCode = "US",
+                City = "Los Angeles",
+                Region = "California",
+                RegionCode = "CA",
+                Zip = "90013",
+                Latitude = 34.0453,
+                Longitude = -118.2413,
+                Location = new LocationDto
+                {
+                    Capital = "Washington D.C.",
+                    GeonameId = 5368361,
+                    Languages = new[] {new LanguagesDto
+                    {
+                        Code = "en",
+                        Name = "English",
+                        Native = "English"
+                    } },
+                    IsEu = false
+                }
+            });
+
+            CreatedAtRoute("GetGeolocation", new
+            {
+                Address = sampleIpAddress,
+                GeoDetails = geoDetails
+            }, geoDetails);
         }
     }
 }
