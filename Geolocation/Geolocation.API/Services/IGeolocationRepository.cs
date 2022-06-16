@@ -9,6 +9,6 @@
         Task CreateGeolocationAsync(Entities.Geolocation geoEntity);
         Task<bool> GeolocationExistsAsync(int id);
         Task<bool> SaveChangesAsync();
-        void DeleteGeolocation(Entities.Geolocation geolocation);
+        Task DeleteGeolocation(Entities.Geolocation geolocation);
     }
 }

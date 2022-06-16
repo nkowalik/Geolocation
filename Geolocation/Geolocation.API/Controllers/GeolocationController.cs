@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
+using Geolocation.Api.AddressToGeolocationApi;
 using Geolocation.Api.ConnectionHandlers;
 using Geolocation.Api.Entities;
 using Geolocation.Api.Models;
 using Geolocation.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Rest.TransientFaultHandling;
-using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace Geolocation.Api.Controllers
@@ -14,18 +14,17 @@ namespace Geolocation.Api.Controllers
     [Route("api/geolocation")]
     public class GeolocationController : ControllerBase
     {
-        private readonly IConfiguration _config;
+        private readonly IGeolocationDataCollector _collector;
         private readonly IGeolocationRepository _geolocationRepository;
         private readonly IMapper _mapper;
 
         private readonly RetryPolicy _retryPolicy;
 
-        public GeolocationController(IConfiguration config,
-            IGeolocationRepository geolocationRepository,
-            IMapper mapper)
+        public GeolocationController(IGeolocationDataCollector collector,
+            IGeolocationRepository geolocationRepository, IMapper mapper)
         {
-            _config = config ??
-                throw new ArgumentNullException(nameof(config));
+            _collector = collector ??
+                throw new ArgumentNullException(nameof(collector));
             _geolocationRepository = geolocationRepository ??
                 throw new ArgumentNullException(nameof(geolocationRepository));
             _mapper = mapper ??
@@ -59,13 +58,14 @@ namespace Geolocation.Api.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<GeolocationDetailsDto>(geolocationEntity));
+            return Ok(_mapper.Map<GeolocationDto>(geolocationEntity));
         }
 
         [HttpPost("{address}")]
         public async Task<IActionResult> CreateGeolocationAsync(string address)
         {
-            var geoDetailsDto = await _retryPolicy.ExecuteAction(() => GetGeolocationDetails(address));
+            var geoDetailsDto = await _retryPolicy.ExecuteAction(() => 
+                _collector.FetchGeolocationDetailsFromApiAsync(address));
 
             if (geoDetailsDto == null)
             {
@@ -99,17 +99,6 @@ namespace Geolocation.Api.Controllers
             _geolocationRepository.DeleteGeolocation(geolocationEntity!);
 
             return NoContent();
-        }
-
-        private async Task<GeolocationDetailsDto?> GetGeolocationDetails(string address)
-        {
-            var accessKey = _config.GetValue<string>("Geolocation:AccessKey");
-            using var httpClient = new HttpClient();
-            using var response = await httpClient
-                .GetAsync($"http://api.ipstack.com/{address}?access_key={accessKey}");
-            string apiResponse = await response.Content.ReadAsStringAsync();
-
-            return JsonConvert.DeserializeObject<GeolocationDetailsDto>(apiResponse);
         }
 
         private static bool IsValidateInput(GeolocationDetailsDto geoDetails)

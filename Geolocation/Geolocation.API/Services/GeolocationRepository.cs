@@ -60,9 +60,10 @@ namespace Geolocation.Api.Services
             return (await _context.SaveChangesAsync() >= 0);
         }
 
-        public void DeleteGeolocation(Entities.Geolocation geolocation)
+        public async Task DeleteGeolocation(Entities.Geolocation geolocation)
         {
             _context.Geolocations.Remove(geolocation);
+            await SaveChangesAsync();
         }
     }
 }
