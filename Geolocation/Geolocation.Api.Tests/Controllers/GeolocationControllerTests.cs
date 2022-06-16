@@ -16,6 +16,7 @@ namespace Geolocation.Api.Tests.Controllers
         private IFixture _fixture;
         private IGeolocationRepository _geoRepository;
         private IMapper _mapper;
+        private ResourceHelper _helper;
 
         private GeolocationController _sut;
 
@@ -29,6 +30,7 @@ namespace Geolocation.Api.Tests.Controllers
             _collector = _fixture.Create<IGeolocationDataCollector>();
             _geoRepository = _fixture.Create<IGeolocationRepository>();
             _mapper = _fixture.Create<IMapper>();
+            _helper = new ResourceHelper();
 
             _sut = new GeolocationController(_collector, _geoRepository, _mapper);
         }
@@ -37,7 +39,7 @@ namespace Geolocation.Api.Tests.Controllers
         public async Task WhenGetGeolocationsAsyncIsCalled_ThenProperResultIsReturned()
         {
             const string address = "135.120.201.155";
-            var sampleGeolocations = GetSampleGeolocations(address);
+            var sampleGeolocations = _helper.GetSampleGeolocations(address);
             _geoRepository.GetGeolocationsAsync()
                 .ReturnsForAnyArgs(sampleGeolocations);
 
@@ -55,7 +57,7 @@ namespace Geolocation.Api.Tests.Controllers
         public async Task WhenGetGeolocationAsyncIsCalled_ThenProperResultIsReturned()
         {
             const string address = "135.120.201.155";
-            var sampleGeolocation = GetSampleGeolocations(address).First();
+            var sampleGeolocation = _helper.GetSampleGeolocations(address).First();
             _geoRepository.GetGeolocationAsync(Arg.Any<int>())
                 .Returns(sampleGeolocation);
 
@@ -73,7 +75,7 @@ namespace Geolocation.Api.Tests.Controllers
         public async Task WhenCreateGeolocationAsyncIsCalled_ThenProperResultIsReturned()
         {
             const string address = "135.120.201.155";
-            var sampleGeolocationDetailsDto = GetSampleGeolocationDetailsDto(address);
+            var sampleGeolocationDetailsDto = _helper.GetSampleGeolocationDetailsDto(address);
             _collector.FetchGeolocationDetailsFromApiAsync(Arg.Any<string>())
                 .Returns(sampleGeolocationDetailsDto);
 
@@ -91,7 +93,7 @@ namespace Geolocation.Api.Tests.Controllers
         public async Task WhenDeleteGeolocationAsyncIsCalled_ThenProperResultIsReturned()
         {
             const string address = "135.120.201.155";
-            var sampleGeolocation = GetSampleGeolocations(address).First();
+            var sampleGeolocation = _helper.GetSampleGeolocations(address).First();
             _geoRepository.GeolocationExistsAsync(Arg.Any<int>()).Returns(true);
             _geoRepository.GetGeolocationAsync(Arg.Any<int>()).Returns(sampleGeolocation);
 
@@ -101,76 +103,6 @@ namespace Geolocation.Api.Tests.Controllers
             {
                 Assert.That(result, Is.Not.Null);
             });
-        }
-
-        private IEnumerable<Entities.Geolocation> GetSampleGeolocations(string address)
-        {
-            return new List<Entities.Geolocation>
-            {
-                new Entities.Geolocation(address)
-                {
-                    Id = 1,
-                    GeoDetails = GetSampleGeolocationDetails(address)
-                },
-            };
-        }
-
-        private Entities.GeolocationDetails GetSampleGeolocationDetails(string address)
-        {
-            return new Entities.GeolocationDetails
-            {
-                Id = 2,
-                Ip = address,
-                Continent = "Europe",
-                ContinentCode = "EU",
-                Country = "Poland",
-                CountryCode = "PL",
-                Region = "Pomerania",
-                RegionCode = "PM",
-                City = "Gdansk",
-                Zip = "80-809",
-                Location = new Entities.Location
-                {
-                    Id = 3,
-                    Capital = "Warsaw",
-                    Is_eu = true
-                },
-                Currency = new Entities.Currency
-                {
-                    Id = 4,
-                    Code = "PLN",
-                    Name = "Polish Zloty"
-                }
-            };
-        }
-
-        private GeolocationDetailsDto GetSampleGeolocationDetailsDto(string address)
-        {
-            return new GeolocationDetailsDto
-            {
-                Id = 2,
-                Ip = address,
-                Continent_name = "Europe",
-                Continent_code = "EU",
-                Country_name = "Poland",
-                Country_code = "PL",
-                Region_name = "Pomerania",
-                Region_code = "PM",
-                City = "Gdansk",
-                Zip = "80-809",
-                Location = new LocationDto
-                {
-                    Id = 3,
-                    Capital = "Warsaw",
-                    Is_eu = true
-                },
-                Currency = new CurrencyDto
-                {
-                    Id = 4,
-                    Code = "PLN",
-                    Name = "Polish Zloty"
-                }
-            };
         }
     }
 }

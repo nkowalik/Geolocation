@@ -1,2 +1,2 @@
 # Geolocation
-Application storing geolocation data based on IP or URL
+Application storing geolocation data based on an IP address
