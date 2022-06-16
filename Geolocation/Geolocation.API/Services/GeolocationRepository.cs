@@ -17,6 +17,20 @@ namespace Geolocation.Api.Services
             return await _context.Geolocations.ToListAsync();
         }
 
+        public async Task<IEnumerable<Entities.Geolocation>> GetGeolocationsAsync(string? countryName)
+        {
+            if (string.IsNullOrEmpty(countryName))
+            {
+                return await GetGeolocationsAsync();
+            }
+
+            countryName = countryName.Trim();
+            return await _context.Geolocations
+                .Where(g => g.GeoDetails != null && g.GeoDetails.Country == countryName)
+                .OrderBy(g => g.GeoDetails.Country)
+                .ToListAsync();
+        }
+
         public async Task<Entities.Geolocation?> GetGeolocationAsync(int id)
         {
             return await _context.Geolocations.Include(g => g.GeoDetails)
@@ -29,6 +43,12 @@ namespace Geolocation.Api.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task CreateGeolocationAsync(Entities.Geolocation geoEntity)
+        {
+            _context.Geolocations.Add(geoEntity);
+            await SaveChangesAsync();
+        }
+
         public async Task<bool> GeolocationExistsAsync(int id)
         {
             var geolocation = await _context.Geolocations.FirstOrDefaultAsync(g => g.Id == id);
@@ -37,7 +57,7 @@ namespace Geolocation.Api.Services
 
         public async Task<bool> SaveChangesAsync()
         {
-            return (await _context.SaveChangesAsync() > 0);
+            return (await _context.SaveChangesAsync() >= 0);
         }
 
         public void DeleteGeolocation(Entities.Geolocation geolocation)

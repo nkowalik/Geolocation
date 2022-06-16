@@ -6,7 +6,8 @@ namespace Geolocation.Api.Profiles
     {
         public GeolocationProfile()
         {
-            CreateMap<Entities.Geolocation, Models.GeolocationDetailsDto>();
+            CreateMap<Entities.Geolocation, Models.GeolocationDto>();
+            CreateMap<Models.GeolocationDto, Entities.Geolocation>();
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Geolocation.Api.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Geolocation.Api.Entities
@@ -23,10 +22,13 @@ namespace Geolocation.Api.Entities
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
-        public LocationDto? Location { get; set; }
+        public Location? Location { get; set; }
+        public TimeZone? Time_zone { get; set; }
+        public Currency? Currency { get; set; }
+        public Connection? Connection { get; set; }
+        public Security? Security { get; set; }
 
         [ForeignKey("GeolocationId")]
-        public Geolocation? Geolocation { get; set; }
         public int GeolocationId { get; set; }
     }
 }

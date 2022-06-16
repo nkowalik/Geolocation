@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Geolocation.Api.ConnectionHandlers;
 using Geolocation.Api.Entities;
 using Geolocation.Api.Models;
 using Geolocation.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Rest.TransientFaultHandling;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace Geolocation.Api.Controllers
 {
@@ -15,29 +18,39 @@ namespace Geolocation.Api.Controllers
         private readonly IGeolocationRepository _geolocationRepository;
         private readonly IMapper _mapper;
 
+        private readonly RetryPolicy _retryPolicy;
+
         public GeolocationController(IConfiguration config,
             IGeolocationRepository geolocationRepository,
             IMapper mapper)
         {
-            _config = config ?? 
+            _config = config ??
                 throw new ArgumentNullException(nameof(config));
             _geolocationRepository = geolocationRepository ??
                 throw new ArgumentNullException(nameof(geolocationRepository));
-            _mapper = mapper ?? 
+            _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
 
-            InitializeGeolocationData();
+            _retryPolicy = new RetryPolicy<GeolocationTransientErrorDetectionStrategy>
+                (new IncrementalRetryStrategy(5, TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(1.5))
+                {
+                    FastFirstRetry = true
+                });
+
+            _retryPolicy.Retrying += (s, e) =>
+            Trace.TraceWarning("An error occurred in attempt number {1} to create geolocation: {0}", e.LastException.Message, e.CurrentRetryCount);
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GeolocationDetailsDto>>> GetGeolocations()
+        public async Task<ActionResult<IEnumerable<GeolocationDto>>> GetGeolocationsAsync(
+            string? countryName = null)
         {
-            var geolocationEntities = await _geolocationRepository.GetGeolocationsAsync();
-            return Ok(_mapper.Map<IEnumerable<GeolocationDetailsDto>>(geolocationEntities));
+            var geolocationEntities = await _geolocationRepository.GetGeolocationsAsync(countryName);
+            return Ok(_mapper.Map<IEnumerable<GeolocationDto>>(geolocationEntities));
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetGeolocation(int id)
+        public async Task<IActionResult> GetGeolocationAsync(int id)
         {
             var geolocationEntity = await _geolocationRepository.GetGeolocationAsync(id);
             
@@ -50,48 +63,32 @@ namespace Geolocation.Api.Controllers
         }
 
         [HttpPost("{address}")]
-        public async Task<ActionResult<GeolocationDto>> CreateGeolocation(string address)
+        public async Task<IActionResult> CreateGeolocationAsync(string address)
         {
-            GeolocationDetailsDto? geoDetails;
-            var accessKey = _config.GetValue<string>("Geolocation:AccessKey");
-            using (var httpClient = new HttpClient())
-            {
-                using var response = await httpClient.GetAsync($"http://api.ipstack.com/{address}?access_key={accessKey}");
-                string apiResponse = await response.Content.ReadAsStringAsync();
-                geoDetails = JsonConvert.DeserializeObject<GeolocationDetailsDto>(apiResponse);
-            }
+            var geoDetailsDto = await _retryPolicy.ExecuteAction(() => GetGeolocationDetails(address));
 
-            if (geoDetails == null)
+            if (geoDetailsDto == null)
             {
                 return NotFound();
             }
 
-            if (!IsValidateInput(geoDetails))
+            if (!IsValidateInput(geoDetailsDto))
             {
                 return BadRequest(address);
             }
 
-            var finalGeoDetails = _mapper.Map<GeolocationDetails>(geoDetails);
-
-            return CreatedAtRoute("GetGeolocation", new
+            var geoEntity = new Entities.Geolocation(address)
             {
-                Address = address,
-                GeoDetails = finalGeoDetails
-            }, finalGeoDetails);
-        }
+                GeoDetails = _mapper.Map<GeolocationDetails>(geoDetailsDto)
+            };
 
-        private static bool IsValidateInput(GeolocationDetailsDto geoDetails)
-        {
-            if (geoDetails.Continent is null || geoDetails.Country is null)
-            {
-                return false;
-            }
+            await _geolocationRepository.CreateGeolocationAsync(geoEntity);
 
-            return true;
+            return Ok(geoEntity);
         }
 
         [HttpDelete]
-        public async Task<ActionResult> DeleteGeolocation(int id)
+        public async Task<ActionResult> DeleteGeolocationAsync(int id)
         {
             if(!await _geolocationRepository.GeolocationExistsAsync(id))
             {
@@ -104,41 +101,25 @@ namespace Geolocation.Api.Controllers
             return NoContent();
         }
 
-        private void InitializeGeolocationData()
+        private async Task<GeolocationDetailsDto?> GetGeolocationDetails(string address)
         {
-            const string sampleIpAddress = "134.201.250.155";
-            var geoDetails = _mapper.Map<GeolocationDetails>(new GeolocationDetailsDto
-            {
-                Ip = sampleIpAddress,
-                Continent = "North America",
-                ContinentCode = "NA",
-                Country = "United States",
-                CountryCode = "US",
-                City = "Los Angeles",
-                Region = "California",
-                RegionCode = "CA",
-                Zip = "90013",
-                Latitude = 34.0453,
-                Longitude = -118.2413,
-                Location = new LocationDto
-                {
-                    Capital = "Washington D.C.",
-                    GeonameId = 5368361,
-                    Languages = new[] {new LanguagesDto
-                    {
-                        Code = "en",
-                        Name = "English",
-                        Native = "English"
-                    } },
-                    IsEu = false
-                }
-            });
+            var accessKey = _config.GetValue<string>("Geolocation:AccessKey");
+            using var httpClient = new HttpClient();
+            using var response = await httpClient
+                .GetAsync($"http://api.ipstack.com/{address}?access_key={accessKey}");
+            string apiResponse = await response.Content.ReadAsStringAsync();
 
-            CreatedAtRoute("GetGeolocation", new
+            return JsonConvert.DeserializeObject<GeolocationDetailsDto>(apiResponse);
+        }
+
+        private static bool IsValidateInput(GeolocationDetailsDto geoDetails)
+        {
+            if (geoDetails.Continent_name is null || geoDetails.Country_name is null)
             {
-                Address = sampleIpAddress,
-                GeoDetails = geoDetails
-            }, geoDetails);
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -1,4 +1,5 @@
 using Geolocation.Api.DbContexts;
+using Geolocation.Api.Profiles;
 using Geolocation.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(options =>
 {
     options.ReturnHttpNotAcceptable = true;
+    options.SuppressAsyncSuffixInActionNames = false;
 }).AddNewtonsoftJson();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -16,7 +18,10 @@ builder.Services.AddDbContext<GeolocationContext>(
     dbContextOpts => dbContextOpts.UseSqlite(
         builder.Configuration["ConnectionStrings:GeolocationDBConnectionString"]));
 builder.Services.AddScoped<IGeolocationRepository, GeolocationRepository>();
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(typeof(GeolocationProfile));
+builder.Services.AddAutoMapper(typeof(GeolocationDetailsProfile));
+builder.Services.AddAutoMapper(typeof(LocationProfile));
+builder.Services.AddAutoMapper(typeof(LanguagesProfile));
 
 var app = builder.Build();
 
