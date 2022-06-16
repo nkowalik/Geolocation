@@ -12,7 +12,7 @@ namespace Geolocation.Api.Entities
         public string? Capital { get; set; }
         public string? Country_flag { get; set; }
         public bool Is_eu { get; set; } = false;
-        public IEnumerable<Languages> Languages { get; set; } = new List<Languages>();
+        public IEnumerable<Language> Languages { get; set; } = new List<Language>();
 
         [ForeignKey("GeolocationDetailsId")]
         public int GeolocationDetailsId { get; set; }

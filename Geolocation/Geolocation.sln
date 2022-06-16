@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geolocation.Api", "Geolocation.API\Geolocation.Api.csproj", "{4113A131-9F7C-4101-A081-2607D764F769}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geolocation.Api", "Geolocation.Api\Geolocation.Api.csproj", "{4113A131-9F7C-4101-A081-2607D764F769}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geolocation.Api.Tests", "Geolocation.Api.Tests\Geolocation.Api.Tests.csproj", "{31F4DD0C-10D9-4E98-B394-B6DD9F372556}"
 EndProject

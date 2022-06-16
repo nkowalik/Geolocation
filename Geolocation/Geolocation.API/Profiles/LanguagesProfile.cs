@@ -2,12 +2,12 @@
 
 namespace Geolocation.Api.Profiles
 {
-    public class LanguagesProfile : Profile
+    public class LanguageProfile : Profile
     {
-        public LanguagesProfile()
+        public LanguageProfile()
         {
-            CreateMap<Entities.Languages, Models.LanguagesDto>();
-            CreateMap<Models.LanguagesDto, Entities.Languages>();
+            CreateMap<Entities.Language, Models.LanguageDto>();
+            CreateMap<Models.LanguageDto, Entities.Language>();
         }
     }
 }

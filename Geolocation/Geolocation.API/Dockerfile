@@ -5,16 +5,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Geolocation.API/Geolocation.API.csproj", "Geolocation.API/"]
-RUN dotnet restore "Geolocation.API/Geolocation.API.csproj"
+COPY ["Geolocation.Api/Geolocation.Api.csproj", "Geolocation.Api/"]
+RUN dotnet restore "Geolocation.Api/Geolocation.Api.csproj"
 COPY . .
-WORKDIR "/src/Geolocation.API"
-RUN dotnet build "Geolocation.API.csproj" -c Release -o /app/build
+WORKDIR "/src/Geolocation.Api"
+RUN dotnet build "Geolocation.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Geolocation.API.csproj" -c Release -o /app/publish
+RUN dotnet publish "Geolocation.Api.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Geolocation.API.dll"]
+ENTRYPOINT ["dotnet", "Geolocation.Api.dll"]

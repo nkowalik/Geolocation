@@ -29,6 +29,8 @@ namespace Geolocation.Api.Tests.Controllers
             _collector = _fixture.Create<IGeolocationDataCollector>();
             _geoRepository = _fixture.Create<IGeolocationRepository>();
             _mapper = _fixture.Create<IMapper>();
+
+            _sut = new GeolocationController(_collector, _geoRepository, _mapper);
         }
 
         [Test]
@@ -38,7 +40,6 @@ namespace Geolocation.Api.Tests.Controllers
             var sampleGeolocations = GetSampleGeolocations(address);
             _geoRepository.GetGeolocationsAsync()
                 .ReturnsForAnyArgs(sampleGeolocations);
-            _sut = new GeolocationController(_collector, _geoRepository, _mapper);
 
             var result = await _sut.GetGeolocationsAsync();
 
@@ -57,7 +58,6 @@ namespace Geolocation.Api.Tests.Controllers
             var sampleGeolocation = GetSampleGeolocations(address).First();
             _geoRepository.GetGeolocationAsync(Arg.Any<int>())
                 .Returns(sampleGeolocation);
-            _sut = new GeolocationController(_collector, _geoRepository, _mapper);
 
             var result = await _sut.GetGeolocationAsync(1);
 
@@ -76,7 +76,6 @@ namespace Geolocation.Api.Tests.Controllers
             var sampleGeolocationDetailsDto = GetSampleGeolocationDetailsDto(address);
             _collector.FetchGeolocationDetailsFromApiAsync(Arg.Any<string>())
                 .Returns(sampleGeolocationDetailsDto);
-            _sut = new GeolocationController(_collector, _geoRepository, _mapper);
 
             var result = await _sut.CreateGeolocationAsync(address);
 
@@ -93,7 +92,6 @@ namespace Geolocation.Api.Tests.Controllers
         {
             const string address = "135.120.201.155";
             var sampleGeolocation = GetSampleGeolocations(address).First();
-            _sut = new GeolocationController(_collector, _geoRepository, _mapper);
             _geoRepository.GeolocationExistsAsync(Arg.Any<int>()).Returns(true);
             _geoRepository.GetGeolocationAsync(Arg.Any<int>()).Returns(sampleGeolocation);
 

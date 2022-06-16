@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "Geolocation.API": {
+    "Geolocation.Api": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",

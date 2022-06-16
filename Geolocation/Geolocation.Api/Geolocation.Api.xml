@@ -1,0 +1,433 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Geolocation.Api</name>
+    </assembly>
+    <members>
+        <member name="T:Geolocation.Api.AddressToGeolocationApi.GeolocationDataCollector">
+            <summary>
+            Collector of the geolocation data from ipstack API
+            </summary>
+        </member>
+        <member name="M:Geolocation.Api.AddressToGeolocationApi.GeolocationDataCollector.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            A constructor for GeolocationDataCollector
+            </summary>
+            <param name="config">Configuration containing access key value</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Geolocation.Api.AddressToGeolocationApi.GeolocationDataCollector.FetchGeolocationDetailsFromApiAsync(System.String)">
+            <summary>
+            Collects geolocation details based on IP address
+            </summary>
+            <param name="address">IP address</param>
+            <returns>GeolocationDetailsDto</returns>
+        </member>
+        <member name="T:Geolocation.Api.Controllers.GeolocationController">
+            <summary>
+            The controller for the geolocation information
+            </summary>
+        </member>
+        <member name="M:Geolocation.Api.Controllers.GeolocationController.#ctor(Geolocation.Api.AddressToGeolocationApi.IGeolocationDataCollector,Geolocation.Api.Services.IGeolocationRepository,AutoMapper.IMapper)">
+            <summary>
+            A constructor for GeolocationController
+            </summary>
+            <param name="collector">A geolocation data collector</param>
+            <param name="geolocationRepository">A geolocation repository</param>
+            <param name="mapper">An auto mapper</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Geolocation.Api.Controllers.GeolocationController.GetGeolocationsAsync(System.String)">
+            <summary>
+            Get all geolocation information with possibility to filter by country name
+            </summary>
+            <param name="countryName">Optional parameter to filter geolocation by country name</param>
+            <returns>An ActionResult</returns>
+            <response code="200">Returns all geolocations</response>
+        </member>
+        <member name="M:Geolocation.Api.Controllers.GeolocationController.GetGeolocationAsync(System.Int32)">
+            <summary>
+            Get geolocation by id
+            </summary>
+            <param name="id">An id of the geolocation</param>
+            <returns>An IActionResult</returns>
+            <response code="200">Returns the requested geolocation</response>
+            <response code="404">The requested geolocation is not found</response>
+        </member>
+        <member name="M:Geolocation.Api.Controllers.GeolocationController.CreateGeolocationAsync(System.String)">
+            <summary>
+            Create geolocation based on IP address
+            </summary>
+            <param name="address">IP address</param>
+            <returns>An IActionResult</returns>
+            <response code="200">A requested geolocation is created</response>
+            <response code="404">Geolocation detailes are not found using address provided</response>
+            <response code="400">Invalid input received</response>
+        </member>
+        <member name="M:Geolocation.Api.Controllers.GeolocationController.DeleteGeolocationAsync(System.Int32)">
+            <summary>
+            Delete geolocation by id
+            </summary>
+            <param name="id">An id of the geolocation</param>
+            <returns>An ActionResult</returns>
+            <response code="200">A requested geolocation is deleted</response>
+        </member>
+        <member name="T:Geolocation.Api.Controllers.GeolocationDetailsController">
+            <summary>
+            The controller for the geolocation details
+            </summary>
+        </member>
+        <member name="M:Geolocation.Api.Controllers.GeolocationDetailsController.#ctor(Microsoft.Extensions.Logging.ILogger{Geolocation.Api.Controllers.GeolocationDetailsController},AutoMapper.IMapper,Geolocation.Api.Services.IGeolocationRepository)">
+            <summary>
+            A constructor for GeolocationDetailsController
+            </summary>
+            <param name="logger">A logger</param>
+            <param name="mapper">An auto mapper</param>
+            <param name="repository">A geolocation repository</param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:Geolocation.Api.Controllers.GeolocationDetailsController.GetGeolocationDetailsAsync(System.Int32)">
+            <summary>
+            Get geolocation details by id
+            </summary>
+            <param name="id">An id of the geolocation details</param>
+            <returns>An ActionResult</returns>
+        </member>
+        <member name="T:Geolocation.Api.Models.ConnectionDto">
+            <summary>
+            A DTO for the connection information
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.ConnectionDto.Id">
+            <summary>
+            An id of the connection
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.ConnectionDto.Asn">
+            <summary>
+            Autonomous System Number
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.ConnectionDto.Isp">
+            <summary>
+            Internet Service Provider
+            </summary>
+        </member>
+        <member name="T:Geolocation.Api.Models.CurrencyDto">
+            <summary>
+            A DTO for the currency information
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.CurrencyDto.Id">
+            <summary>
+            An id of the currency
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.CurrencyDto.Code">
+            <summary>
+            A currency code
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.CurrencyDto.Name">
+            <summary>
+            A currency name
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.CurrencyDto.Plural">
+            <summary>
+            A currency plural name
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.CurrencyDto.Symbol">
+            <summary>
+            A currency symbol
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.CurrencyDto.Symbol_native">
+            <summary>
+            A currency native symbol
+            </summary>
+        </member>
+        <member name="T:Geolocation.Api.Models.GeolocationDetailsDto">
+            <summary>
+            A DTO for the geolocation details
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Id">
+            <summary>
+            An id of the geolocation details
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Ip">
+            <summary>
+            An IP address
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Hostname">
+            <summary>
+            A hostname to IP address
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Type">
+            <summary>
+            A type of IP address
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Continent_code">
+            <summary>
+            A code of the continent
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Continent_name">
+            <summary>
+            A continent name
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Country_code">
+            <summary>
+            A code of the country
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Country_name">
+            <summary>
+            A country name
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Region_code">
+            <summary>
+            A code of the region
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Region_name">
+            <summary>
+            A region name
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.City">
+            <summary>
+            A city name
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Zip">
+            <summary>
+            A zip
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Latitude">
+            <summary>
+            A latitude
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Longitude">
+            <summary>
+            A longitude
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Location">
+            <summary>
+            Location information
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Time_zone">
+            <summary>
+            Time zone information
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Currency">
+            <summary>
+            Currency information
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Connection">
+            <summary>
+            Connection information
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Security">
+            <summary>
+            Security information
+            </summary>
+        </member>
+        <member name="T:Geolocation.Api.Models.GeolocationDto">
+            <summary>
+            A DTO for the geolocation information
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDto.Id">
+            <summary>
+            An id of the geolocation
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDto.Address">
+            <summary>
+            An IP address
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.GeolocationDto.GeoDetails">
+            <summary>
+            Geolocation details
+            </summary>
+        </member>
+        <member name="T:Geolocation.Api.Models.LanguageDto">
+            <summary>
+            A DTO for the language information
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.LanguageDto.Id">
+            <summary>
+            An id of the language
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.LanguageDto.Code">
+            <summary>
+            A code of the language
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.LanguageDto.Name">
+            <summary>
+            A language name
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.LanguageDto.Native">
+            <summary>
+            A native language name
+            </summary>
+        </member>
+        <member name="T:Geolocation.Api.Models.LocationDto">
+            <summary>
+            A DTO for the location information
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.LocationDto.Id">
+            <summary>
+            An id of the location
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.LocationDto.Geoname_id">
+            <summary>
+            A geoname id
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.LocationDto.Capital">
+            <summary>
+            A capital name
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.LocationDto.Country_flag">
+            <summary>
+            A country flag (link)
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.LocationDto.Is_eu">
+            <summary>
+            Is the country in European Union
+            </summary>
+        </member>
+        <member name="F:Geolocation.Api.Models.LocationDto.Languages">
+            <summary>
+            A collection of languages information
+            </summary>
+        </member>
+        <member name="T:Geolocation.Api.Models.SecurityDto">
+            <summary>
+            A DTO for the security information
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.SecurityDto.Id">
+            <summary>
+            An id of the security
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.SecurityDto.Is_proxy">
+            <summary>
+            Is proxy used
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.SecurityDto.Proxy_type">
+            <summary>
+            A type of the proxy
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.SecurityDto.Is_crawler">
+            <summary>
+            Is crawler used
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.SecurityDto.Crawler_name">
+            <summary>
+            A crawler name
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.SecurityDto.Crawler_type">
+            <summary>
+            A type of the crawler
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.SecurityDto.Is_tor">
+            <summary>
+            Is tor used
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.SecurityDto.Threat_level">
+            <summary>
+            A level of the threat
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.SecurityDto.Threat_types">
+            <summary>
+            Types of the threat
+            </summary>
+        </member>
+        <member name="T:Geolocation.Api.Models.TimeZoneDto">
+            <summary>
+            A DTO for the time zone information
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.TimeZoneDto.TimeZoneId">
+            <summary>
+            An id of the time zone
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.TimeZoneDto.Id">
+            <summary>
+            An identity(name) of the time zone
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.TimeZoneDto.CurrentTime">
+            <summary>
+            A current time
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.TimeZoneDto.Gmt_offset">
+            <summary>
+            A GMT offcet
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.TimeZoneDto.Code">
+            <summary>
+            A code of the time zone
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.TimeZoneDto.Is_daylight_saving">
+            <summary>
+            Is Daylight Saving Time
+            </summary>
+        </member>
+        <member name="T:Geolocation.Api.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+    </members>
+</doc>

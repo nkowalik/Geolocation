@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Geolocation.Api.Entities
 {
-    public class Languages
+    public class Language
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
