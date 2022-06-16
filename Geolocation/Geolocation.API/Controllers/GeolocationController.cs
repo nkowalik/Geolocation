@@ -92,7 +92,7 @@ namespace Geolocation.Api.Controllers
         /// <param name="address">IP address</param>
         /// <returns>An IActionResult</returns>
         /// <response code="200">A requested geolocation is created</response>
-        /// <response code="404">Geolocation detailes are not found using address provided</response>
+        /// <response code="404">Geolocation details are not found using address provided</response>
         /// <response code="400">Invalid input received</response>
         [HttpPost("{address}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

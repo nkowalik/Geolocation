@@ -39,7 +39,11 @@ namespace Geolocation.Api.Controllers
         /// </summary>
         /// <param name="id">An id of the geolocation details</param>
         /// <returns>An ActionResult</returns>
+        /// <response code="200">Returns the requested geolocation details</response>
+        /// <response code="404">Geolocation details are not found</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<GeolocationDetailsDto>> GetGeolocationDetailsAsync(int id)
         {
             if (!await _repository.GeolocationExistsAsync(id))

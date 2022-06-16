@@ -61,7 +61,7 @@
             <param name="address">IP address</param>
             <returns>An IActionResult</returns>
             <response code="200">A requested geolocation is created</response>
-            <response code="404">Geolocation detailes are not found using address provided</response>
+            <response code="404">Geolocation details are not found using address provided</response>
             <response code="400">Invalid input received</response>
         </member>
         <member name="M:Geolocation.Api.Controllers.GeolocationController.DeleteGeolocationAsync(System.Int32)">
@@ -92,6 +92,8 @@
             </summary>
             <param name="id">An id of the geolocation details</param>
             <returns>An ActionResult</returns>
+            <response code="200">Returns the requested geolocation details</response>
+            <response code="404">Geolocation details are not found</response>
         </member>
         <member name="T:Geolocation.Api.Models.ConnectionDto">
             <summary>
