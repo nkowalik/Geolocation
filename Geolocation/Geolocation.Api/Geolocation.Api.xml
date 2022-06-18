@@ -9,11 +9,12 @@
             Collector of the geolocation data from ipstack API
             </summary>
         </member>
-        <member name="M:Geolocation.Api.AddressToGeolocationApi.GeolocationDataCollector.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+        <member name="M:Geolocation.Api.AddressToGeolocationApi.GeolocationDataCollector.#ctor(Microsoft.Extensions.Configuration.IConfiguration,System.Net.Http.IHttpClientFactory)">
             <summary>
             A constructor for GeolocationDataCollector
             </summary>
             <param name="config">Configuration containing access key value</param>
+            <param name="httpClientFactory">Factory for http client</param>
             <exception cref="T:System.ArgumentNullException"></exception>
         </member>
         <member name="M:Geolocation.Api.AddressToGeolocationApi.GeolocationDataCollector.FetchGeolocationDetailsFromApiAsync(System.String)">
@@ -35,7 +36,6 @@
             <param name="collector">A geolocation data collector</param>
             <param name="geolocationRepository">A geolocation repository</param>
             <param name="mapper">An auto mapper</param>
-            <exception cref="T:System.ArgumentNullException"></exception>
         </member>
         <member name="M:Geolocation.Api.Controllers.GeolocationController.GetGeolocationsAsync(System.String)">
             <summary>
@@ -84,7 +84,6 @@
             <param name="logger">A logger</param>
             <param name="mapper">An auto mapper</param>
             <param name="repository">A geolocation repository</param>
-            <exception cref="T:System.ArgumentNullException"></exception>
         </member>
         <member name="M:Geolocation.Api.Controllers.GeolocationDetailsController.GetGeolocationDetailsAsync(System.Int32)">
             <summary>
@@ -100,11 +99,6 @@
             A DTO for the connection information
             </summary>
         </member>
-        <member name="P:Geolocation.Api.Models.ConnectionDto.Id">
-            <summary>
-            An id of the connection
-            </summary>
-        </member>
         <member name="P:Geolocation.Api.Models.ConnectionDto.Asn">
             <summary>
             Autonomous System Number
@@ -118,11 +112,6 @@
         <member name="T:Geolocation.Api.Models.CurrencyDto">
             <summary>
             A DTO for the currency information
-            </summary>
-        </member>
-        <member name="P:Geolocation.Api.Models.CurrencyDto.Id">
-            <summary>
-            An id of the currency
             </summary>
         </member>
         <member name="P:Geolocation.Api.Models.CurrencyDto.Code">
@@ -153,11 +142,6 @@
         <member name="T:Geolocation.Api.Models.GeolocationDetailsDto">
             <summary>
             A DTO for the geolocation details
-            </summary>
-        </member>
-        <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Id">
-            <summary>
-            An id of the geolocation details
             </summary>
         </member>
         <member name="P:Geolocation.Api.Models.GeolocationDetailsDto.Ip">
@@ -255,11 +239,6 @@
             A DTO for the geolocation information
             </summary>
         </member>
-        <member name="P:Geolocation.Api.Models.GeolocationDto.Id">
-            <summary>
-            An id of the geolocation
-            </summary>
-        </member>
         <member name="P:Geolocation.Api.Models.GeolocationDto.Address">
             <summary>
             An IP address
@@ -273,11 +252,6 @@
         <member name="T:Geolocation.Api.Models.LanguageDto">
             <summary>
             A DTO for the language information
-            </summary>
-        </member>
-        <member name="P:Geolocation.Api.Models.LanguageDto.Id">
-            <summary>
-            An id of the language
             </summary>
         </member>
         <member name="P:Geolocation.Api.Models.LanguageDto.Code">
@@ -300,11 +274,6 @@
             A DTO for the location information
             </summary>
         </member>
-        <member name="P:Geolocation.Api.Models.LocationDto.Id">
-            <summary>
-            An id of the location
-            </summary>
-        </member>
         <member name="P:Geolocation.Api.Models.LocationDto.Geoname_id">
             <summary>
             A geoname id
@@ -320,6 +289,21 @@
             A country flag (link)
             </summary>
         </member>
+        <member name="P:Geolocation.Api.Models.LocationDto.Country_flag_emoji">
+            <summary>
+            A country flag emoji
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.LocationDto.Country_flag_emoji_unicode">
+            <summary>
+            A country flag emoji unicode
+            </summary>
+        </member>
+        <member name="P:Geolocation.Api.Models.LocationDto.Calling_code">
+            <summary>
+            A calling code
+            </summary>
+        </member>
         <member name="P:Geolocation.Api.Models.LocationDto.Is_eu">
             <summary>
             Is the country in European Union
@@ -333,11 +317,6 @@
         <member name="T:Geolocation.Api.Models.SecurityDto">
             <summary>
             A DTO for the security information
-            </summary>
-        </member>
-        <member name="P:Geolocation.Api.Models.SecurityDto.Id">
-            <summary>
-            An id of the security
             </summary>
         </member>
         <member name="P:Geolocation.Api.Models.SecurityDto.Is_proxy">
@@ -383,11 +362,6 @@
         <member name="T:Geolocation.Api.Models.TimeZoneDto">
             <summary>
             A DTO for the time zone information
-            </summary>
-        </member>
-        <member name="P:Geolocation.Api.Models.TimeZoneDto.TimeZoneId">
-            <summary>
-            An id of the time zone
             </summary>
         </member>
         <member name="P:Geolocation.Api.Models.TimeZoneDto.Id">

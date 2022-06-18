@@ -6,10 +6,6 @@
     public class GeolocationDto
     {
         /// <summary>
-        /// An id of the geolocation
-        /// </summary>
-        public int Id { get; set; }
-        /// <summary>
         /// An IP address
         /// </summary>
         public string Address { get; set; } = string.Empty;

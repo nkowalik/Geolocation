@@ -6,10 +6,6 @@
     public class ConnectionDto
     {
         /// <summary>
-        /// An id of the connection
-        /// </summary>
-        public int Id { get; set; }
-        /// <summary>
         /// Autonomous System Number
         /// </summary>
         public int Asn { get; set; }

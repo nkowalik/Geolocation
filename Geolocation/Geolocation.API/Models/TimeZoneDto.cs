@@ -6,10 +6,6 @@
     public class TimeZoneDto
     {
         /// <summary>
-        /// An id of the time zone
-        /// </summary>
-        public int TimeZoneId { get; set; }
-        /// <summary>
         /// An identity(name) of the time zone
         /// </summary>
         public string? Id { get; set; }

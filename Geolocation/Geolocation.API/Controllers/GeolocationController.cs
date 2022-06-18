@@ -29,16 +29,12 @@ namespace Geolocation.Api.Controllers
         /// <param name="collector">A geolocation data collector</param>
         /// <param name="geolocationRepository">A geolocation repository</param>
         /// <param name="mapper">An auto mapper</param>
-        /// <exception cref="ArgumentNullException"></exception>
         public GeolocationController(IGeolocationDataCollector collector,
             IGeolocationRepository geolocationRepository, IMapper mapper)
         {
-            _collector = collector ??
-                throw new ArgumentNullException(nameof(collector));
-            _geolocationRepository = geolocationRepository ??
-                throw new ArgumentNullException(nameof(geolocationRepository));
-            _mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
+            _collector = collector;
+            _geolocationRepository = geolocationRepository;
+            _mapper = mapper;
 
             _retryPolicy = new RetryPolicy<GeolocationTransientErrorDetectionStrategy>
                 (new IncrementalRetryStrategy(5, TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(1.5))

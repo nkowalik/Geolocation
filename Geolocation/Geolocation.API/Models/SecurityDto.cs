@@ -6,10 +6,6 @@
     public class SecurityDto
     {
         /// <summary>
-        /// An id of the security
-        /// </summary>
-        public int Id { get; set; }
-        /// <summary>
         /// Is proxy used
         /// </summary>
         public bool Is_proxy { get; set; } = false;

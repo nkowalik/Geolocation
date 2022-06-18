@@ -22,16 +22,12 @@ namespace Geolocation.Api.Controllers
         /// <param name="logger">A logger</param>
         /// <param name="mapper">An auto mapper</param>
         /// <param name="repository">A geolocation repository</param>
-        /// <exception cref="ArgumentNullException"></exception>
         public GeolocationDetailsController(ILogger<GeolocationDetailsController> logger,
             IMapper mapper, IGeolocationRepository repository)
         {
-            _logger = logger ??
-                throw new ArgumentNullException(nameof(logger));
-            _mapper = mapper ??
-                throw new ArgumentNullException(nameof(mapper));
-            _repository = repository ??
-                throw new ArgumentNullException(nameof(repository));
+            _logger = logger;
+            _mapper = mapper;
+            _repository = repository;
         }
 
         /// <summary>

@@ -24,7 +24,9 @@ builder.Services.AddSwaggerGen(setupAction =>
 
 builder.Services.AddDbContext<GeolocationContext>(
     dbContextOpts => dbContextOpts.UseSqlite(
-        builder.Configuration["ConnectionStrings:GeolocationDBConnectionString"]));
+        builder.Configuration["ConnectionStrings:GeolocationDBConnectionString"]), 
+    ServiceLifetime.Singleton);
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IGeolocationRepository, GeolocationRepository>();
 builder.Services.AddScoped<IGeolocationDataCollector, GeolocationDataCollector>();
 builder.Services.AddAutoMapper(typeof(GeolocationProfile));

@@ -49,7 +49,6 @@ namespace Geolocation.Api.Tests.Controllers
         {
             return new GeolocationDetailsDto
             {
-                Id = 2,
                 Ip = address,
                 Continent_name = "Europe",
                 Continent_code = "EU",
@@ -61,13 +60,11 @@ namespace Geolocation.Api.Tests.Controllers
                 Zip = "80-809",
                 Location = new LocationDto
                 {
-                    Id = 3,
                     Capital = "Warsaw",
                     Is_eu = true
                 },
                 Currency = new CurrencyDto
                 {
-                    Id = 4,
                     Code = "PLN",
                     Name = "Polish Zloty"
                 }

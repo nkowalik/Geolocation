@@ -6,10 +6,6 @@
     public class CurrencyDto
     {
         /// <summary>
-        /// An id of the currency
-        /// </summary>
-        public int Id { get; set; }
-        /// <summary>
         /// A currency code
         /// </summary>
         public string? Code { get; set; }

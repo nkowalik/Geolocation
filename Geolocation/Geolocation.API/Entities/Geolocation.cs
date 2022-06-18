@@ -11,7 +11,7 @@ namespace Geolocation.Api.Entities
 
         [Required]
         [MaxLength(200)]
-        public string Address { get; set; }
+        public string Address { get; private set; }
 
         public GeolocationDetails GeoDetails { get; set; } = new GeolocationDetails();
 

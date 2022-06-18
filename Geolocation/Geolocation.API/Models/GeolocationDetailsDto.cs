@@ -6,10 +6,6 @@
     public class GeolocationDetailsDto
     {
         /// <summary>
-        /// An id of the geolocation details
-        /// </summary>
-        public int Id { get; set; }
-        /// <summary>
         /// An IP address
         /// </summary>
         public string? Ip { get; set; }

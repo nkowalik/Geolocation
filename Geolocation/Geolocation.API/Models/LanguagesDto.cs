@@ -6,10 +6,6 @@
     public class LanguageDto
     {
         /// <summary>
-        /// An id of the language
-        /// </summary>
-        public int Id { get; set; }
-        /// <summary>
         /// A code of the language
         /// </summary>
         public string? Code { get; set; }
